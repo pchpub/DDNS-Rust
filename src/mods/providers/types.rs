@@ -3,6 +3,7 @@ use std::fmt::Display;
 #[derive(Debug)]
 pub enum ProvidersErrorType {
     QueryDomainRecordsError,
+    DeleteSubdomainRecordsError,
     NoRecordFound,
     TooManyRecords,
     NotInitialized,
@@ -23,6 +24,9 @@ impl Display for ProvidersErrorType {
             ProvidersErrorType::KeyError => write!(f, "KeyError"),
             ProvidersErrorType::NetworkError => write!(f, "NetworkError"),
             ProvidersErrorType::OtherError => write!(f, "OtherError"),
+            ProvidersErrorType::DeleteSubdomainRecordsError => {
+                write!(f, "DeleteSubdomainRecordsError")
+            }
         }
     }
 }

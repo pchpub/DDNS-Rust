@@ -1,7 +1,7 @@
 use super::{types::ProvidersErrorType, DDNSProviderTrait};
 use aliyun_dns::{AliyunDns, DomainRecord};
-use anyhow::Result;
 use async_trait::async_trait;
+use log::{error, info};
 use serde::{Deserialize, Deserializer, Serialize};
 
 #[derive(Serialize)]
@@ -98,6 +98,20 @@ impl Aliyun {
             record_id: String::new(),
         }
     }
+
+    pub async fn delete_subdomain_records(&mut self) -> Result<(), String> {
+        match self
+            .aliyun_dns
+            .delete_subdomain_records(&self.domain, &self.rr, Some(&self.record_type))
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                error!("Failed to delete subdomain records: {}", e);
+                Err("Failed to delete subdomain records".to_string())
+            }
+        }
+    }
 }
 
 #[async_trait]
@@ -139,6 +153,21 @@ impl DDNSProviderTrait for Aliyun {
                 }
             }
             // println!("Updated Record ID: {}", response.record_id);
+        } else {
+            match self
+                .aliyun_dns
+                .add_domain_record(&self.domain, &self.rr, &self.record_type, ip, self.ttl)
+                .await
+            {
+                Ok(response) => {
+                    self.record_id = response.record_id;
+                    info!("Added Record ID: {}", self.record_id);
+                }
+                Err(e) => {
+                    error!("Failed to add domain record: {}", e);
+                    return Err("Failed to add domain record".to_string());
+                }
+            }
         }
 
         Ok(())
@@ -163,7 +192,7 @@ impl DDNSProviderTrait for Aliyun {
             {
                 Ok(query_response) => query_response,
                 Err(e) => {
-                    eprintln!("Failed to query domain records: {}", e);
+                    error!("Failed to query domain records: {}", e);
                     return Err(ProvidersErrorType::QueryDomainRecordsError);
                 }
             };
@@ -175,10 +204,19 @@ impl DDNSProviderTrait for Aliyun {
             page_number += 1;
         }
 
-        println!("Total Records: {}", total_record_count);
+        // println!("Total Records: {}", total_record_count);
         if total_record_count == 0 {
+            self.has_record = Option::Some(false);
             return Err(ProvidersErrorType::NoRecordFound);
         } else if total_record_count > 1 {
+            match self.delete_subdomain_records().await {
+                Ok(_) => {}
+                Err(e) => {
+                    error!("Failed to delete subdomain records: {}", e);
+                    return Err(ProvidersErrorType::DeleteSubdomainRecordsError);
+                }
+            };
+            self.has_record = Option::Some(false);
             return Err(ProvidersErrorType::TooManyRecords);
         }
 
