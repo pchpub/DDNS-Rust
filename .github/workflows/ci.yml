@@ -1,0 +1,95 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - 'v*.*.*'
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - 'config.example.**'
+      - '**.sh'
+      - '**.json'
+      - '**.yml'
+      - '!.github/workflows/**'
+jobs:
+  check:
+    name: Review the code
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Check
+      run: cargo check
+  build:
+    name: Build the binary file
+    if: ${{ github.event_name != 'pull_request' && success() }}
+    runs-on: ubuntu-latest
+    needs:
+      - check
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: |
+        docker run -i --rm \
+        -v $PWD:/workdir \
+        -v ~/.cargo/git:/root/.cargo/git \
+        -v ~/.cargo/registry:/root/.cargo/registry \
+        registry.gitlab.com/rust_musl_docker/image:stable-latest \
+        cargo build --profile=fast -vv --target=x86_64-unknown-linux-musl
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: ddns-rust-${{ github.run_number }}
+        path: |
+          ./target/x86_64-unknown-linux-musl/fast/ddns-rust
+  
+  alpha:
+    name: Upload the Alpha test version file
+    permissions: write-all
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: ddns-rust-${{ github.run_number }}
+    - name: Delete old release assets
+      uses: mknejp/delete-release-assets@v1
+      with:
+        token: ${{ github.token }}
+        tag: alpha-releases
+        assets: |
+          ddns-rust
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        prerelease: true
+        tag_name: alpha-releases
+        files: |
+          ./ddns-rust
+
+  release:
+    name: Upload the binary file when it is released
+    permissions: write-all
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: ddns-rust-${{ github.run_number }}
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./ddns-rust
