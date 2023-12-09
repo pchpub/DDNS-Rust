@@ -74,7 +74,7 @@ pub struct SiteConfig {
     pub retry_on_failure: bool,
 }
 
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub enum AddressVersion {
     V4,
     V6,

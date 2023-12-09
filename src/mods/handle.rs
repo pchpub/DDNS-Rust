@@ -3,6 +3,8 @@ use std::time::Duration;
 use log::{error, trace};
 use tokio::time::sleep;
 
+use crate::mods::{interfaces::AddressType, types::AddressVersion};
+
 use super::{
     interfaces::{get_interface_ips, get_interfaces},
     providers::DDNSProviderTrait,
@@ -47,7 +49,7 @@ pub async fn spawn_tasks() -> Result<(), String> {
                     .into_iter()
                     .filter(|ip| match ip {
                         super::interfaces::IPAddress::V4(_ip, address_type) => {
-                            if site.address_version.to_string() == "V4".to_string()
+                            if site.address_version == AddressVersion::V4
                                 && *address_type == site.address_type
                             {
                                 true
@@ -56,7 +58,7 @@ pub async fn spawn_tasks() -> Result<(), String> {
                             }
                         }
                         super::interfaces::IPAddress::V6(_ip, address_type) => {
-                            if site.address_version.to_string() == "V6".to_string()
+                            if site.address_version == AddressVersion::V6
                                 && *address_type == site.address_type
                             {
                                 true
