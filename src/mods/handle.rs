@@ -64,7 +64,7 @@ pub async fn spawn_tasks() -> Result<(), String> {
                         }
                     })
                     .collect::<Vec<_>>();
-                if ips.len() - 1 < site.index {
+                if ips.len() < site.index + 1 {
                     if site.retry_on_failure {
                         if site.retry_count == 0 {
                             interval_duration = Duration::from_secs(site.retry_interval);
