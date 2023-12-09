@@ -3,7 +3,9 @@ use std::time::Duration;
 use log::{error, trace};
 use tokio::time::sleep;
 
-use crate::mods::{interfaces::AddressType, types::AddressVersion};
+use crate::mods::{
+    interfaces::AddressType, providers::types::ProvidersErrorType, types::AddressVersion,
+};
 
 use super::{
     interfaces::{get_interface_ips, get_interfaces},
@@ -101,23 +103,29 @@ pub async fn spawn_tasks() -> Result<(), String> {
                     });
                 let cloud_ip = match provier.get_ip_address().await {
                     Ok(cloud_ip) => cloud_ip,
-                    Err(e) => {
-                        error!("Failed to get cloud IP address: {}", e);
-                        if site.retry_on_failure {
-                            if site.retry_count == 0 {
-                                interval_duration = Duration::from_secs(site.retry_interval);
-                                continue;
-                            } else if failures < site.retry_count {
-                                failures += 1;
-                                interval_duration = Duration::from_secs(site.retry_interval);
-                                continue;
+                    Err(e) => match e {
+                        ProvidersErrorType::NoRecordFound => {
+                            trace!("No record found, should create new record");
+                            String::new()
+                        }
+                        _ => {
+                            error!("Failed to get cloud IP address: {}", e);
+                            if site.retry_on_failure {
+                                if site.retry_count == 0 {
+                                    interval_duration = Duration::from_secs(site.retry_interval);
+                                    continue;
+                                } else if failures < site.retry_count {
+                                    failures += 1;
+                                    interval_duration = Duration::from_secs(site.retry_interval);
+                                    continue;
+                                } else {
+                                    break;
+                                }
                             } else {
                                 break;
                             }
-                        } else {
-                            break;
                         }
-                    }
+                    },
                 };
                 if cloud_ip == needed_ip {
                     interval_duration = Duration::from_secs(site.interval);
