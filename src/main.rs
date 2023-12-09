@@ -1,5 +1,5 @@
 use ddns_rust::mods::{config::spawn::init_config, handle::spawn_tasks, statics::CONFIG};
-use log::error;
+use log::{error, trace};
 use std::env;
 
 #[tokio::main]
@@ -39,7 +39,8 @@ async fn main() {
             })
             .filter(
                 None,
-                <LevelFilter as std::str::FromStr>::from_str(&log_level)
+                log_level
+                    .parse::<LevelFilter>()
                     .unwrap_or(LevelFilter::Info),
             )
             .parse_default_env()
@@ -52,6 +53,8 @@ async fn main() {
     // initialization plugins end
 
     // initialization tasks
+    trace!("initialization tasks");
+    println!("test");
     if let Err(value) = spawn_tasks().await {
         error!("initialization tasks failed: {}", value);
         panic!("Error: failed to spawn tasks in main() reason: {}", value);

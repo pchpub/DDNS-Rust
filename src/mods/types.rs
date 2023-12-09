@@ -40,7 +40,7 @@ impl ToString for LogLevel {
 impl Config {
     pub fn new() -> Config {
         Config {
-            log_level: LogLevel::Info,
+            log_level: LogLevel::Trace,
             // plugins: Vec::new(),
             sites_config: Vec::new(),
         }
