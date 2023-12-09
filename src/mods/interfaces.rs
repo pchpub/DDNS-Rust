@@ -1,4 +1,4 @@
-use log::error;
+use log::{error, trace};
 use network_interface::{NetworkInterface, NetworkInterfaceConfig};
 use serde::{Deserialize, Serialize};
 
@@ -49,17 +49,18 @@ pub async fn get_interface_ips(
             }
         }
     }
+    trace!("get_interface_ips len(): {:?}", ips.len());
     ips
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 
 pub enum IPAddress {
     V4(String, AddressType),
     V6(String, AddressType),
 }
 
-#[derive(Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Clone, PartialEq, Debug)]
 pub enum AddressType {
     Public,
     Private,

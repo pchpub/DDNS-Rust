@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use log::error;
+use log::{error, trace};
 use tokio::time::sleep;
 
 use super::{
@@ -40,6 +40,8 @@ pub async fn spawn_tasks() -> Result<(), String> {
                     }
                 };
 
+                trace!("interfaces: {:?}", interfaces);
+
                 let ips = get_interface_ips(&interfaces, &site.interface)
                     .await
                     .into_iter()
@@ -64,8 +66,11 @@ pub async fn spawn_tasks() -> Result<(), String> {
                         }
                     })
                     .collect::<Vec<_>>();
+
+                trace!("ips: {:?}", ips);
                 if ips.len() < site.index + 1 {
                     if site.retry_on_failure {
+                        trace!("retrying");
                         if site.retry_count == 0 {
                             interval_duration = Duration::from_secs(site.retry_interval);
                             continue;
