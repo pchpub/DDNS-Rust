@@ -3,9 +3,7 @@ use std::time::Duration;
 use log::{error, trace};
 use tokio::time::sleep;
 
-use crate::mods::{
-    interfaces::AddressType, providers::types::ProvidersErrorType, types::AddressVersion,
-};
+use crate::mods::{providers::types::ProvidersErrorType, types::AddressVersion};
 
 use super::{
     interfaces::{get_interface_ips, get_interfaces},
