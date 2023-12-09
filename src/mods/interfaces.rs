@@ -41,10 +41,11 @@ pub async fn get_interface_ips(
     for itf in interfaces.iter() {
         if itf.name == interface {
             for addr in itf.addr.iter() {
-                match addr {
-                    network_interface::Addr::V4(_address) => ips.push(IPAddress::from(addr)),
-                    network_interface::Addr::V6(_address) => todo!(),
-                }
+                // match addr {
+                //     network_interface::Addr::V4(_address) => ips.push(IPAddress::from(addr)),
+                //     network_interface::Addr::V6(_address) => ips.push(IPAddress::from(addr)),
+                // }
+                ips.push(IPAddress::from(addr))
             }
         }
     }
