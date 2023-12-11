@@ -1,0 +1,21 @@
+log_level = "info"
+
+[[sites_config]]
+name = "452977c1-aef1-4b16-8299-5b840b4e31ed"
+interface = "ens33"
+index = 0
+address_version = "V4"
+address_type = "Public"
+interval = 600
+enabled = true
+retry_count = 0
+retry_interval = 60
+retry_on_failure = true
+
+[sites_config.provider.Aliyun]
+access_key_id = "key"
+access_key_secret = "secret"
+domain = "example.com"
+rr = "ddnstest"
+ttl = 600
+record_type = "A"
