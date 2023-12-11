@@ -54,7 +54,6 @@ async fn main() {
 
     // initialization tasks
     trace!("initialization tasks");
-    println!("test");
     if let Err(value) = spawn_tasks().await {
         error!("initialization tasks failed: {}", value);
         panic!("Error: failed to spawn tasks in main() reason: {}", value);
