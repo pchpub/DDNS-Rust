@@ -13,7 +13,7 @@ pub struct Aliyun {
     pub ttl: Option<u64>,
     pub record_type: String,
     #[serde(skip)]
-    aliyun_dns: AliyunDns, // 假设这是一个自定义类型
+    aliyun_dns: AliyunDns,
     #[serde(skip)]
     has_record: Option<bool>,
     #[serde(skip)]

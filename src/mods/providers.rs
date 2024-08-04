@@ -1,6 +1,7 @@
 pub mod aliyun;
 pub mod cloudflare;
 pub mod dnspod;
+pub mod dynv6;
 pub mod namecheap;
 pub mod types;
 
@@ -19,7 +20,7 @@ pub trait DDNSProviderTrait: Send + Sync {
     async fn request_execute(
         &self,
         request: &RequestStructure,
-    ) -> Result<(HashMap<String, String>, String), ()> {
+    ) -> Result<(u16, HashMap<String, String>, String), ()> {
         request.execute().await
     }
 }

@@ -3,7 +3,10 @@ use std::time::Duration;
 use log::{error, trace};
 use tokio::time::sleep;
 
-use crate::mods::{providers::types::ProvidersErrorType, types::AddressVersion};
+use crate::mods::{
+    providers::types::ProvidersErrorType,
+    types::{AddressVersion, DDNSProvider},
+};
 
 use super::{
     interfaces::{get_interface_ips, get_interfaces},
@@ -91,15 +94,17 @@ pub async fn spawn_tasks() -> Result<(), String> {
                     super::interfaces::IPAddress::V4(ip, _address_type) => ip,
                     super::interfaces::IPAddress::V6(ip, _address_type) => ip,
                 };
-                let mut provier: Box<dyn DDNSProviderTrait> =
-                    Box::new(match site.provider.clone() {
-                        super::types::DDNSProvider::Aliyun(value) => value,
-                        super::types::DDNSProvider::Custom => {
-                            error!("Custom provider not implemented");
-                            break;
-                        }
-                    });
-                let cloud_ip = match provier.get_ip_address().await {
+                let mut provider: Box<dyn DDNSProviderTrait> = match site.provider.clone() {
+                    DDNSProvider::Aliyun(value) => Box::new(value) as Box<dyn DDNSProviderTrait>,
+                    DDNSProvider::Custom => {
+                        error!("Custom provider not implemented");
+                        // 处理 Custom 提供者的逻辑
+                        // 此处可以返回一个默认的 DDNSProviderTrait 的实现或者 panic!
+                        panic!("Custom provider not implemented");
+                    }
+                    DDNSProvider::Dynv6(value) => Box::new(value) as Box<dyn DDNSProviderTrait>,
+                };
+                let cloud_ip = match provider.get_ip_address().await {
                     Ok(cloud_ip) => cloud_ip,
                     Err(e) => match e {
                         ProvidersErrorType::NoRecordFound => {
@@ -130,7 +135,7 @@ pub async fn spawn_tasks() -> Result<(), String> {
                     failures = 0;
                     continue;
                 } else {
-                    match provier.update(&needed_ip).await {
+                    match provider.update(&needed_ip).await {
                         Ok(_) => {
                             failures = 0;
                         }

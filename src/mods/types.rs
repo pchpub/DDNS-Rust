@@ -2,7 +2,10 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
-use super::{interfaces::AddressType, providers::aliyun::Aliyun};
+use super::{
+    interfaces::AddressType,
+    providers::{aliyun::Aliyun, dynv6::Dynv6},
+};
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Config {
@@ -117,7 +120,7 @@ pub enum DDNSProvider {
     // NoIP, // TODO
     // Dynu, // TODO
     // DynDNS, // TODO
-    // Dynv6, // TODO
+    Dynv6(Dynv6),
     // GoDaddy, // TODO
     // GoogleDomains, // TODO
     // HurricaneElectric, // TODO

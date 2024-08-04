@@ -24,6 +24,7 @@ anyhow = "1.0.75"
 env_logger = "0.10.1"
 log = "0.4.20"
 chrono = "0.4.31"
+serde_json = "1.0.122"
 
 [profile.fast]
 inherits = "release"

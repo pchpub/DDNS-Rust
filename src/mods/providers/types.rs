@@ -6,6 +6,7 @@ pub enum ProvidersErrorType {
     DeleteSubdomainRecordsError,
     NoRecordFound,
     TooManyRecords,
+    DeleteDomainRecordsError,
     NotInitialized,
     KeyError,
     NetworkError,
@@ -27,6 +28,7 @@ impl Display for ProvidersErrorType {
             ProvidersErrorType::DeleteSubdomainRecordsError => {
                 write!(f, "DeleteSubdomainRecordsError")
             }
+            ProvidersErrorType::DeleteDomainRecordsError => write!(f, "DeleteDomainRecordsError"),
         }
     }
 }
