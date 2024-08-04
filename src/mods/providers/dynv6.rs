@@ -9,8 +9,8 @@ use std::{collections::HashMap, vec};
 
 #[derive(Serialize)]
 pub struct Dynv6 {
-    pub zone_id: String, //you can get it from the url
-    pub token: String,   //Bearer Token
+    pub zone_id: u64,  //you can get it from the url
+    pub token: String, //Bearer Token
     pub rr: String,
     pub record_type: String,
     #[serde(skip)]
@@ -24,7 +24,7 @@ pub struct Dynv6 {
 // 辅助结构体，用于反序列化
 #[derive(Deserialize)]
 struct ADynv6Helper {
-    pub zone_id: String,
+    pub zone_id: u64,
     pub token: String, //Bearer Token
     pub rr: String,
     pub record_type: String,
@@ -44,7 +44,7 @@ impl<'de> Deserialize<'de> for Dynv6 {
         }
 
         // 根据 zone_id 和 token 构造 Dynv6Client
-        let client = Dynv6Client::new(&helper.token, &helper.zone_id);
+        let client = Dynv6Client::new(&helper.token, helper.zone_id);
 
         // 构造最终的 Dynv6 结构体
         Ok(Dynv6 {
@@ -65,7 +65,7 @@ impl Clone for Dynv6 {
             zone_id: self.zone_id.clone(),
             token: self.token.clone(),
             rr: self.rr.clone(),
-            client: Dynv6Client::new(&self.token, &self.zone_id),
+            client: Dynv6Client::new(&self.token, self.zone_id),
             record_type: self.record_type.clone(),
             has_record: self.has_record,
             record_id: self.record_id.clone(),
@@ -74,9 +74,9 @@ impl Clone for Dynv6 {
 }
 
 impl Dynv6 {
-    pub fn new(zone_id: &str, token: &str, rr: &str, record_type: &str) -> Self {
+    pub fn new(zone_id: u64, token: &str, rr: &str, record_type: &str) -> Self {
         Self {
-            zone_id: zone_id.to_string(),
+            zone_id: zone_id,
             token: token.to_string(),
             rr: rr.to_string(),
             client: Dynv6Client::new(token, zone_id),
@@ -125,7 +125,7 @@ impl DDNSProviderTrait for Dynv6 {
         } else {
             match self
                 .client
-                .add_domain_record(&self.zone_id, &self.rr, &self.record_type, ip)
+                .add_domain_record(&self.rr, &self.record_type, ip)
                 .await
             {
                 Ok(record_id) => {
@@ -184,14 +184,14 @@ impl DDNSProviderTrait for Dynv6 {
 }
 
 struct Dynv6Client {
-    zone_id: String,
+    zone_id: u64,
     token: String,
 }
 
 impl Dynv6Client {
-    fn new(token: &str, zone_id: &str) -> Self {
+    fn new(token: &str, zone_id: u64) -> Self {
         Self {
-            zone_id: zone_id.to_string(),
+            zone_id: zone_id,
             token: token.to_string(),
         }
     }
@@ -515,12 +515,11 @@ impl Dynv6Client {
 
     async fn add_domain_record(
         &self,
-        domain: &str,
         rr: &str,
         record_type: &str,
         value: &str,
     ) -> Result<u64, String> {
-        match domain {
+        match rr {
             "@" | "" => {
                 return Err("Please add zone on website".to_string());
             }

@@ -1,3 +1,4 @@
+// cSpell:ignore ddns, chrono
 use ddns_rust::mods::{config::spawn::init_config, handle::spawn_tasks, statics::CONFIG};
 use log::{error, trace};
 use std::env;
