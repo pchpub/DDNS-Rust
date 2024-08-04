@@ -1,9 +1,42 @@
-log_level = "info"
+log_level = "trace"
+
+[[sites_config]]
+name = ""
+provider = "Custom"
+interface = ""
+index = 0
+address_version = "V4"
+address_type = "Public"
+interval = 0
+enabled = false
+retry_count = 0
+retry_interval = 60
+retry_on_failure = true
 
 [[sites_config]]
 name = "452977c1-aef1-4b16-8299-5b840b4e31ed"
 interface = "ens33"
-index = 0
+index = 1
+address_version = "V4"
+address_type = "Private"
+interval = 600
+enabled = true
+retry_count = 0
+retry_interval = 60
+retry_on_failure = true
+
+[sites_config.provider.Aliyun]
+access_key_id = "your_access_key_id"
+access_key_secret = "your_access_key_secret"
+domain = "example.com"
+rr = "www"
+ttl = 600
+record_type = "A"
+
+[[sites_config]]
+name = "6e771d2e-8d06-25ff-1c84-1709a4ad8cb6"
+interface = "ens34"
+index = 1
 address_version = "V4"
 address_type = "Public"
 interval = 600
@@ -12,10 +45,21 @@ retry_count = 0
 retry_interval = 60
 retry_on_failure = true
 
-[sites_config.provider.Aliyun]
-access_key_id = "key"
-access_key_secret = "secret"
-domain = "example.com"
-rr = "ddnstest"
-ttl = 600
+[sites_config.provider.Dynv6]
+zone_id = 11451
+token = "YOUR_TOKEN"
+rr = "www"
 record_type = "A"
+
+[[sites_config]]
+name = ""
+provider = "Custom"
+interface = ""
+index = 0
+address_version = "V4"
+address_type = "Public"
+interval = 0
+enabled = false
+retry_count = 0
+retry_interval = 60
+retry_on_failure = true
