@@ -6,6 +6,18 @@ This is the README file for the `DDNS-Rust` project.
 
 The `DDNS-Rust` project is a Rust-based dynamic DNS (DDNS) client. It allows users to update their DNS records dynamically, enabling them to host services on their own machines with changing IP addresses.
 
+## Features
+
+The `DDNS-Rust` project has the following features:
+| features      | support status |
+| ------------  | -------------  |
+| Aliyun DNS    | ✅            |
+| Dynv6         | ✅            |
+| cloudflare    | ❌            |
+| dnspod        | ❌            |
+| namecheap     | ❌            |
+| custom        | ❌            |
+
 ## Installation
 
 To install `DDNS-Rust`, follow these steps:
