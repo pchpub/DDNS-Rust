@@ -14,7 +14,7 @@ pub struct Config {
     pub sites_config: Vec<SiteConfig>,
 }
 
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub enum LogLevel {
     #[serde(rename = "info")]
     Info,

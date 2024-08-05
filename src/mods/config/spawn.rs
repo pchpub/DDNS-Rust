@@ -31,6 +31,6 @@ pub async fn init_config<T: AsRef<Path>>(path: &T) -> Result<Config, String> {
             return Err("failed to init config".to_string());
         }
     };
-    crate::mods::statics::CONFIG.lock().await.sites_config = config.sites_config.clone();
+    *crate::mods::statics::CONFIG.lock().await = config.clone();
     Ok(config)
 }
