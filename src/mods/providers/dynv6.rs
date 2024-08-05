@@ -203,15 +203,15 @@ impl Dynv6Client {
         let mut request = request.clone();
         let headers = HeaderMap::from_iter(vec![
             (
-                HeaderName::from_static("Authorization"),
+                HeaderName::from_static("authorization"),
                 format!("Bearer {}", self.token).parse().unwrap(),
             ),
             (
-                HeaderName::from_static("Content-Type"),
+                HeaderName::from_static("content-type"),
                 "application/json".parse().unwrap(),
             ),
             (
-                HeaderName::from_static("Accept"),
+                HeaderName::from_static("accept"),
                 "application/json".parse().unwrap(),
             ),
         ]);
@@ -253,11 +253,26 @@ impl Dynv6Client {
                 // fuck dynv6
                 let url = format!("https://dynv6.com/api/v2/zones/{}", self.zone_id);
 
+                let headers = HeaderMap::from_iter(vec![
+                    (
+                        HeaderName::from_static("authorization"),
+                        format!("Bearer {}", self.token).parse().unwrap(),
+                    ),
+                    (
+                        HeaderName::from_static("content-type"),
+                        "application/json".parse().unwrap(),
+                    ),
+                    (
+                        HeaderName::from_static("accept"),
+                        "application/json".parse().unwrap(),
+                    ),
+                ]);
+
                 let request = RequestStructure::new(
                     RequestMethod::GET,
                     url,
                     String::new(),
-                    None,
+                    Some(headers),
                     None,
                     None,
                     None,
@@ -399,11 +414,26 @@ impl Dynv6Client {
                 }
                 .to_string();
 
+                let headers = HeaderMap::from_iter(vec![
+                    (
+                        HeaderName::from_static("authorization"),
+                        format!("Bearer {}", self.token).parse().unwrap(),
+                    ),
+                    (
+                        HeaderName::from_static("content-type"),
+                        "application/json".parse().unwrap(),
+                    ),
+                    (
+                        HeaderName::from_static("accept"),
+                        "application/json".parse().unwrap(),
+                    ),
+                ]);
+
                 let request = RequestStructure::new(
                     RequestMethod::PATCH,
                     url,
                     context,
-                    None,
+                    Some(headers),
                     None,
                     None,
                     None,
@@ -453,11 +483,26 @@ impl Dynv6Client {
                 }
                 .to_string();
 
+                let headers = HeaderMap::from_iter(vec![
+                    (
+                        HeaderName::from_static("authorization"),
+                        format!("Bearer {}", self.token).parse().unwrap(),
+                    ),
+                    (
+                        HeaderName::from_static("content-type"),
+                        "application/json".parse().unwrap(),
+                    ),
+                    (
+                        HeaderName::from_static("accept"),
+                        "application/json".parse().unwrap(),
+                    ),
+                ]);
+
                 let request = RequestStructure::new(
                     RequestMethod::PATCH,
                     url,
                     context,
-                    None,
+                    Some(headers),
                     None,
                     None,
                     None,
@@ -487,11 +532,26 @@ impl Dynv6Client {
             self.zone_id, record_id
         );
 
+        let headers = HeaderMap::from_iter(vec![
+            (
+                HeaderName::from_static("authorization"),
+                format!("Bearer {}", self.token).parse().unwrap(),
+            ),
+            (
+                HeaderName::from_static("content-type"),
+                "application/json".parse().unwrap(),
+            ),
+            (
+                HeaderName::from_static("accept"),
+                "application/json".parse().unwrap(),
+            ),
+        ]);
+
         let request = RequestStructure::new(
             RequestMethod::DELETE,
             url,
             String::new(),
-            None,
+            Some(headers),
             None,
             None,
             None,

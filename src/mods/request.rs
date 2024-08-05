@@ -1,3 +1,4 @@
+use log::trace;
 use reqwest::header::HeaderMap;
 use std::{collections::HashMap, time::Duration};
 
@@ -271,6 +272,7 @@ async fn async_patchwebpage(
     Ok((status, rsp_headers, rsp_body))
 }
 
+#[derive(Debug)]
 pub struct RequestStructure {
     pub mathod: RequestMethod,
     pub url: String,
@@ -329,6 +331,7 @@ impl RequestStructure {
     }
 
     pub async fn execute(&self) -> Result<(u16, HashMap<String, String>, String), ()> {
+        trace!("RequestStructure execute: {:?}", self);
         match self.mathod {
             RequestMethod::GET => {
                 async_getwebpage(
@@ -380,6 +383,7 @@ impl RequestStructure {
     }
 }
 
+#[derive(Debug)]
 pub enum RequestMethod {
     GET,
     POST,

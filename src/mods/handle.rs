@@ -97,9 +97,6 @@ pub async fn spawn_tasks() -> Result<(), String> {
                 let mut provider: Box<dyn DDNSProviderTrait> = match site.provider.clone() {
                     DDNSProvider::Aliyun(value) => Box::new(value) as Box<dyn DDNSProviderTrait>,
                     DDNSProvider::Custom => {
-                        error!("Custom provider not implemented");
-                        // 处理 Custom 提供者的逻辑
-                        // 此处可以返回一个默认的 DDNSProviderTrait 的实现或者 panic!
                         panic!("Custom provider not implemented");
                     }
                     DDNSProvider::Dynv6(value) => Box::new(value) as Box<dyn DDNSProviderTrait>,
