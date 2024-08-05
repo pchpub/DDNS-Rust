@@ -41,10 +41,6 @@ pub async fn get_interface_ips(
     for itf in interfaces.iter() {
         if itf.name == interface {
             for addr in itf.addr.iter() {
-                // match addr {
-                //     network_interface::Addr::V4(_address) => ips.push(IPAddress::from(addr)),
-                //     network_interface::Addr::V6(_address) => ips.push(IPAddress::from(addr)),
-                // }
                 ips.push(IPAddress::from(addr))
             }
         }
@@ -103,8 +99,12 @@ impl AddressType {
                     || address.ip.octets()[0] == 0b11111101
                 {
                     AddressType::Private // fc00::/7
+                } else if address.ip.octets()[0] == 0b11111110
+                    && (address.ip.octets()[1] >> 6 == 0b10)
+                {
+                    AddressType::LinkLocal //fe80::/10
                 } else if address.ip.octets()[0] >= 0b00100000
-                    || address.ip.octets()[0] <= 0b00111111
+                    && address.ip.octets()[0] <= 0b00111111
                 {
                     AddressType::Public // 2000::/3
                 } else {
