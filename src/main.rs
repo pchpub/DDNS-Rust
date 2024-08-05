@@ -25,15 +25,6 @@ async fn main() {
     // initialization logger
     {
         let log_level = CONFIG.lock().await.log_level.to_string();
-
-        println!("log_level: {}", log_level);
-        println!(
-            "log_level2: {}",
-            log_level
-                .parse::<LevelFilter>()
-                .unwrap_or(LevelFilter::Info)
-        );
-
         use env_logger::Builder;
         use log::LevelFilter;
         use std::io::Write;
